@@ -5,9 +5,9 @@ import pandas as pd
 import pytest
 import torch
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.pinn import CRPIL6PINN
-from src.biotwin.training.train_pinn import (
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.pinn import CRPIL6PINN
+from biotwin.training.train_pinn import (
     data_loss_fn,
     load_trajectory_dataset,
     patient_level_split,

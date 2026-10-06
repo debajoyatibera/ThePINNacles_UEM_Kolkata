@@ -42,3 +42,4 @@ outputs/figures/*
 *.ckpt
 *.onnx
 *.parquet
+*.egg-info/

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.data.generate_patient_conditioned_digital_twin import (
+from biotwin.data.generate_patient_conditioned_digital_twin import (
     BASELINE_FEATURES,
     DEFAULT_SOURCE_PATH,
     generate_patient_conditioned_digital_twin,

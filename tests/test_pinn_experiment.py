@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-from src.biotwin.training import run_pinn_experiment as experiment
+from biotwin.training import run_pinn_experiment as experiment
 
 
 def _small_synthetic_dataset() -> pd.DataFrame:

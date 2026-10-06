@@ -10,8 +10,8 @@ import pandas as pd
 import torch
 from torch import nn
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.conditioned_pinn import (
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.conditioned_pinn import (
     CONDITIONED_STATIC_FEATURES,
     ConditionedPINN,
     StaticFeatureScaler,

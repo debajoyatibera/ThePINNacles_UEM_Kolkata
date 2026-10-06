@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.data.process_nhanes import (
+from biotwin.data.process_nhanes import (
     NHANES_FILES,
     OUTPUT_COLUMNS,
     build_nhanes_baseline,

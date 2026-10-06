@@ -14,8 +14,8 @@ import pandas as pd
 import torch
 from torch import nn
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.pinn import CRPIL6PINN, physics_loss
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.pinn import CRPIL6PINN, physics_loss
 
 
 TRAINING_DATA_PATH = Path("data/synthetic/synthetic_inflammatory_trajectories.csv")

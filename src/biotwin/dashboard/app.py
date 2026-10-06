@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-from src.biotwin.models.conditioned_pinn import (
+from biotwin.models.conditioned_pinn import (
     CONDITIONED_STATIC_FEATURES,
     ConditionedPINN,
     load_scaler_artifact,

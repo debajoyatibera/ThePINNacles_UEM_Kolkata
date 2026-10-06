@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.data.prepare_modeling_cohort import (
+from biotwin.data.prepare_modeling_cohort import (
     IMPORTANT_VARIABLES,
     prepare_modeling_cohort,
 )

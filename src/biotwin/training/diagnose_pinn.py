@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 import torch
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.pinn import CRPIL6PINN, TimeNormalizedPINN
-from src.biotwin.training.run_pinn_experiment import (
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.pinn import CRPIL6PINN, TimeNormalizedPINN
+from biotwin.training.run_pinn_experiment import (
     MODEL_PATH,
     PREDICTION_COLUMNS as BASELINE_PREDICTION_COLUMNS,
     calculate_metrics,
@@ -20,7 +20,7 @@ from src.biotwin.training.run_pinn_experiment import (
     load_checkpoint,
     predict_frame,
 )
-from src.biotwin.training.train_pinn import (
+from biotwin.training.train_pinn import (
     TRAINING_DATA_PATH,
     _tensorize,
     load_trajectory_dataset,

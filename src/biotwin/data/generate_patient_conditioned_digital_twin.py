@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from src.biotwin.models.biological_ode import BiologicalParameters, simulate_trajectory
+from biotwin.models.biological_ode import BiologicalParameters, simulate_trajectory
 
 DEFAULT_SOURCE_PATH = Path("data/processed/nhanes_modeling_cohort.csv")
 DEFAULT_OUTPUT_PATH = Path("data/processed/patient_conditioned_digital_twin.csv")

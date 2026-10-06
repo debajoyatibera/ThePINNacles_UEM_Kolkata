@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.dashboard.app import (
+from biotwin.dashboard.app import (
     SCALER_PATH,
     calculate_simulated_trend,
     load_baseline_data,
@@ -116,7 +116,7 @@ def test_persisted_scaler_values_are_finite() -> None:
 
 
 def test_dashboard_loads_persisted_scaler_without_runtime_fit(monkeypatch: pytest.MonkeyPatch) -> None:
-    from src.biotwin.models.conditioned_pinn import StaticFeatureScaler
+    from biotwin.models.conditioned_pinn import StaticFeatureScaler
 
     def _fail_fit(self, dataset):
         raise AssertionError("Dashboard should not fit the scaler at runtime.")
@@ -137,7 +137,7 @@ def test_dashboard_loads_persisted_scaler_without_runtime_fit(monkeypatch: pytes
 
 
 def test_missing_scaler_artifact_raises_clear_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    import src.biotwin.dashboard.app as dashboard
+    import biotwin.dashboard.app as dashboard
 
     monkeypatch.setattr(dashboard, "SCALER_PATH", dashboard.REPO_ROOT / "outputs/models/does_not_exist.json")
     with pytest.raises(FileNotFoundError, match="Persisted static-feature scaler"):

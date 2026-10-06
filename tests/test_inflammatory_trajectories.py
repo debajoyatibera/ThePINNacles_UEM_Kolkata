@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.data.generate_inflammatory_trajectories import generate_inflammatory_trajectories
+from biotwin.data.generate_inflammatory_trajectories import generate_inflammatory_trajectories
 
 
 REQUIRED_COLUMNS = ["patient_id", "time_hours", "stimulus", "il6", "crp"]

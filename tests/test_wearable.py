@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.data.generate_wearable import generate_synthetic_wearable
+from biotwin.data.generate_wearable import generate_synthetic_wearable
 
 
 @pytest.fixture

@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.biotwin.models.biological_ode import BiologicalParameters, simulate_trajectory
+from biotwin.models.biological_ode import BiologicalParameters, simulate_trajectory
 
 
 def _build_patient_stimulus(rng: np.random.Generator, n_hours: int) -> np.ndarray:

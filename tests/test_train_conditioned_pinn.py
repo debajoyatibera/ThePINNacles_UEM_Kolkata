@@ -3,9 +3,9 @@ import pandas as pd
 import pytest
 import torch
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.conditioned_pinn import CONDITIONED_STATIC_FEATURES
-from src.biotwin.training.train_conditioned_pinn import (
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.conditioned_pinn import CONDITIONED_STATIC_FEATURES
+from biotwin.training.train_conditioned_pinn import (
     load_conditioned_dataset,
     patient_level_split,
     train_conditioned_pinn,

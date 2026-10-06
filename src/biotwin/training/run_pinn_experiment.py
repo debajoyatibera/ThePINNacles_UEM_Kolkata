@@ -20,9 +20,9 @@ import pandas as pd
 import torch
 from torch import nn
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.pinn import CRPIL6PINN, physics_loss, physics_residual
-from src.biotwin.training.train_pinn import (
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.pinn import CRPIL6PINN, physics_loss, physics_residual
+from biotwin.training.train_pinn import (
     TRAINING_DATA_PATH,
     _tensorize,
     data_loss_fn,

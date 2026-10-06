@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 import torch
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.pinn import CRPIL6PINN, physics_loss, physics_residual
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.pinn import CRPIL6PINN, physics_loss, physics_residual
 
 
 @pytest.fixture

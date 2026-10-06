@@ -13,3 +13,4 @@ uvicorn==0.54.0
 streamlit==1.64.0
 pydantic==2.13.5
 shap==0.52.0
+-e .

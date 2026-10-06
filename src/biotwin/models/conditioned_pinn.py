@@ -18,7 +18,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-from src.biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.biological_ode import BiologicalParameters
 
 CONDITIONED_STATIC_FEATURES = [
     "age",

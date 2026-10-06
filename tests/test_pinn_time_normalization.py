@@ -8,11 +8,11 @@ import pytest
 import torch
 from torch import nn
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.pinn import CRPIL6PINN, TimeNormalizedPINN, physics_residual
-from src.biotwin.training import diagnose_pinn as diagnostic
-from src.biotwin.training.run_pinn_experiment import PREDICTION_COLUMNS
-from src.biotwin.training.train_pinn import patient_level_split
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.pinn import CRPIL6PINN, TimeNormalizedPINN, physics_residual
+from biotwin.training import diagnose_pinn as diagnostic
+from biotwin.training.run_pinn_experiment import PREDICTION_COLUMNS
+from biotwin.training.train_pinn import patient_level_split
 
 
 class EchoInputs(nn.Module):

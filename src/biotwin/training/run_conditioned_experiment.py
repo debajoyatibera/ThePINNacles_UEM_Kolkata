@@ -21,8 +21,8 @@ import numpy as np
 import pandas as pd
 import torch
 
-from src.biotwin.models.biological_ode import BiologicalParameters
-from src.biotwin.models.conditioned_pinn import (
+from biotwin.models.biological_ode import BiologicalParameters
+from biotwin.models.conditioned_pinn import (
     CONDITIONED_STATIC_FEATURES,
     ConditionedPINN,
     StaticFeatureScaler,
@@ -31,14 +31,14 @@ from src.biotwin.models.conditioned_pinn import (
     physics_loss as conditioned_physics_loss,
     physics_residual as conditioned_physics_residual,
 )
-from src.biotwin.models.pinn import CRPIL6PINN, TimeNormalizedPINN, physics_loss, physics_residual
-from src.biotwin.training.train_conditioned_pinn import (
+from biotwin.models.pinn import CRPIL6PINN, TimeNormalizedPINN, physics_loss, physics_residual
+from biotwin.training.train_conditioned_pinn import (
     load_conditioned_dataset,
     patient_level_split,
     tensorize_conditioned_dataset,
     train_conditioned_pinn,
 )
-from src.biotwin.training.train_pinn import data_loss_fn, train_pinn
+from biotwin.training.train_pinn import data_loss_fn, train_pinn
 
 DATA_PATH = Path("data/processed/patient_conditioned_digital_twin.csv")
 MODEL_DIR = Path("outputs/models")

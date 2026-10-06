@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.data.generate_nhanes import generate_synthetic_baseline
+from biotwin.data.generate_nhanes import generate_synthetic_baseline
 
 
 REQUIRED_COLUMNS = {

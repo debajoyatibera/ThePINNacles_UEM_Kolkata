@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.biotwin.models.biological_ode import (
+from biotwin.models.biological_ode import (
     BiologicalParameters,
     inflammatory_ode,
     simulate_trajectory,
