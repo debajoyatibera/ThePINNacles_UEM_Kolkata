@@ -168,6 +168,19 @@ def _format_value(value: Any) -> str:
     return str(value)
 
 
+def _decode_sex(value: Any) -> str:
+    """Display the NHANES sex code in a human-readable form without modifying the data."""
+    try:
+        sex_code = int(float(value))
+    except (TypeError, ValueError):
+        return "Unknown"
+    if sex_code == 1:
+        return "Male"
+    if sex_code == 2:
+        return "Female"
+    return "Unknown"
+
+
 def _render_ui() -> None:
     if st is None:  # pragma: no cover - guarded at runtime
         raise RuntimeError("Streamlit is not installed in this environment.")
@@ -196,7 +209,7 @@ def _render_ui() -> None:
     columns = st.columns(4)
     baseline_fields = [
         ("Age", baseline_row.get("age")),
-        ("Sex", baseline_row.get("sex")),
+        ("Sex", _decode_sex(baseline_row.get("sex"))),
         ("BMI", baseline_row.get("bmi")),
         ("Waist (cm)", baseline_row.get("waist_cm")),
         ("Systolic BP", baseline_row.get("systolic_bp")),
@@ -208,28 +221,49 @@ def _render_ui() -> None:
     for index, (label, value) in enumerate(baseline_fields):
         with columns[index % 4]:
             st.metric(label=label, value=_format_value(value))
+            if label == "Observed baseline CRP":
+                st.caption("Real NHANES baseline observation")
 
     st.markdown("### SYNTHETIC DYNAMIC INPUT")
     st.caption("The dynamic stimulus shown here is synthetic/model-generated for this competition PoC; it is not an observed wearable stream.")
-    st.line_chart(patient_dynamic.set_index("time_hours")["synthetic_stimulus"])
+    stimulus_chart = pd.DataFrame(
+        {
+            "Time (hours since simulation start)": patient_dynamic["time_hours"].to_numpy(dtype=np.float32),
+            "Synthetic dynamic stimulus": patient_dynamic["synthetic_stimulus"].to_numpy(dtype=np.float32),
+        }
+    ).set_index("Time (hours since simulation start)")
+    st.line_chart(stimulus_chart, x_label="Time (hours since simulation start)")
     st.dataframe(patient_dynamic[["time_hours", "synthetic_stimulus"]].head(10), use_container_width=True)
 
     st.markdown("### DIGITAL TWIN SIMULATION")
     il6_series = pd.Series(result["il6_pred"], index=patient_dynamic["time_hours"].to_numpy())
     crp_series = pd.Series(result["crp_pred"], index=patient_dynamic["time_hours"].to_numpy())
+    il6_chart = pd.DataFrame(
+        {
+            "Time (hours since simulation start)": patient_dynamic["time_hours"].to_numpy(dtype=np.float32),
+            "Model-simulated IL-6": il6_series.to_numpy(dtype=np.float32),
+        }
+    ).set_index("Time (hours since simulation start)")
+    crp_chart = pd.DataFrame(
+        {
+            "Time (hours since simulation start)": patient_dynamic["time_hours"].to_numpy(dtype=np.float32),
+            "Model-simulated CRP": crp_series.to_numpy(dtype=np.float32),
+        }
+    ).set_index("Time (hours since simulation start)")
     st.markdown("#### MODEL-SIMULATED IL-6")
-    st.line_chart(il6_series, x_label="Time (hours)")
+    st.line_chart(il6_chart, x_label="Time (hours since simulation start)")
     st.markdown("#### MODEL-SIMULATED CRP")
-    st.line_chart(crp_series, x_label="Time (hours)")
+    st.line_chart(crp_chart, x_label="Time (hours since simulation start)")
     st.info(
         "Controlled synthetic evaluation: The controlled experiment did not demonstrate predictive "
         "improvement from patient conditioning."
     )
 
-    st.markdown("### MODEL OUTPUT DIRECTION")
+    st.markdown("### MODEL OUTPUT TREND")
     combined_signal = il6_series.to_numpy() + crp_series.to_numpy()
     trend = calculate_simulated_trend(combined_signal)
-    st.info(f"Direction of combined model output (IL-6 + CRP): {trend.title()}")
+    trend_label = "Stable" if trend == "relatively stable" else trend.title()
+    st.info(f"Model-simulated trajectory: {trend_label}")
     st.caption("Not a clinical indicator.")
 
     st.markdown("### DATA & MODEL PROVENANCE")
