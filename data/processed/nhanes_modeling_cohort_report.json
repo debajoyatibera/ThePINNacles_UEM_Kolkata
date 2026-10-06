@@ -1,0 +1,23 @@
+{
+  "source_row_count": 11933,
+  "modeling_cohort_row_count": 7282,
+  "excluded_row_count": 4651,
+  "crp_observed_count": 7282,
+  "crp_missing_count": 4651,
+  "percentage_baseline_with_observed_crp": 61.02,
+  "unique_patient_id_count": 7282,
+  "duplicate_patient_id_count": 0,
+  "missing_value_counts": {
+    "age": 0,
+    "sex": 0,
+    "bmi": 112,
+    "weight_kg": 72,
+    "height_cm": 91,
+    "waist_cm": 328,
+    "systolic_bp": 589,
+    "diastolic_bp": 589,
+    "hba1c": 775,
+    "crp": 0,
+    "sedentary_minutes": 1467
+  }
+}

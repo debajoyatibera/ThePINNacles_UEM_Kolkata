@@ -1,0 +1,15 @@
+# Direct dependencies installed and validated with Python 3.12.3 on Ubuntu 24.04.
+# PyTorch is pinned to its CPU-only wheel for Codespaces; no CUDA is required.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+pytest==9.1.1
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+matplotlib==3.11.2
+torch==2.14.0+cpu
+fastapi==0.141.1
+uvicorn==0.54.0
+streamlit==1.64.0
+pydantic==2.13.5
+shap==0.52.0

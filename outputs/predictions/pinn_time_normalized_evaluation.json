@@ -1,0 +1,54 @@
+{
+  "experiment": "A: time mapped linearly to [0, 1]",
+  "training_configuration": {
+    "optimizer": "Adam",
+    "device": "cpu",
+    "seed": 42,
+    "train_patient_count": 80,
+    "validation_patient_count": 20,
+    "epochs": 100,
+    "learning_rate": 0.001,
+    "physics_weight": 1.0,
+    "hidden_dim": 32,
+    "time_min_hours": 0.0,
+    "time_max_hours": 167.0,
+    "time_transform": "(time_hours - time_min_hours) / (time_max_hours - time_min_hours)",
+    "stimulus_transform": "none; physical stimulus scale retained",
+    "ode_parameters": {
+      "alpha_il6": 1.8,
+      "k_il6": 0.45,
+      "alpha_crp": 1.2,
+      "k_crp": 0.18
+    }
+  },
+  "il6": {
+    "mae": 1.3636568891934568,
+    "rmse": 3.2567695095083766,
+    "r2": -0.021104014939520077
+  },
+  "crp": {
+    "mae": 13.267640026529623,
+    "rmse": 32.806615525501925,
+    "r2": -0.1317926845025177
+  },
+  "validation_physics_loss": 1.416266918182373,
+  "validation_physics_residual_metric": 0.5789437890052795,
+  "training_history_summary": {
+    "all_losses_finite": true,
+    "total_loss_upward_steps": 0,
+    "initial": {
+      "total_loss": 1045.2132568359375,
+      "data_loss": 1043.71630859375,
+      "physics_loss": 1.4969786405563354
+    },
+    "final": {
+      "total_loss": 892.0159912109375,
+      "data_loss": 890.5138549804688,
+      "physics_loss": 1.5021625757217407
+    },
+    "physics_loss_min": 1.3474842309951782,
+    "physics_loss_max": 2.243925094604492
+  },
+  "scientific_limitation": "Performance metrics at this stage measure agreement with the synthetic biological simulator and do not establish clinical validity.",
+  "data_source": "synthetic ODE-generated trajectories only"
+}

@@ -1,0 +1,73 @@
+{
+  "seed": 42,
+  "train_patients": 5,
+  "validation_patients": 1456,
+  "epochs": 3,
+  "learning_rate": 0.001,
+  "physics_weight": 1.0,
+  "history": [
+    {
+      "epoch": 1.0,
+      "total_loss": 464.57281494140625,
+      "data_loss": 461.71307373046875,
+      "physics_loss": 2.8597447872161865
+    },
+    {
+      "epoch": 2.0,
+      "total_loss": 463.408447265625,
+      "data_loss": 460.5669250488281,
+      "physics_loss": 2.841526508331299
+    },
+    {
+      "epoch": 3.0,
+      "total_loss": 462.2257385253906,
+      "data_loss": 459.4022521972656,
+      "physics_loss": 2.823495864868164
+    }
+  ],
+  "final_total_loss": 462.2257385253906,
+  "final_data_loss": 459.4022521972656,
+  "final_physics_loss": 2.823495864868164,
+  "feature_names": [
+    "age",
+    "sex",
+    "bmi",
+    "waist_cm",
+    "systolic_bp",
+    "diastolic_bp",
+    "hba1c",
+    "sedentary_minutes"
+  ],
+  "feature_scaler": {
+    "means": {
+      "age": 51.0,
+      "sex": 0.4000000059604645,
+      "bmi": 32.6,
+      "waist_cm": 106.91999999999999,
+      "systolic_bp": 123.0,
+      "diastolic_bp": 80.53333333333333,
+      "hba1c": 5.680000000000001,
+      "sedentary_minutes": 492.0
+    },
+    "stds": {
+      "age": 13.535139452550904,
+      "sex": 0.4898979365825653,
+      "bmi": 5.409990757847929,
+      "waist_cm": 10.421209142897,
+      "systolic_bp": 12.046207333061767,
+      "diastolic_bp": 7.940333046471594,
+      "hba1c": 0.36551333764994154,
+      "sedentary_minutes": 368.6949958976932
+    },
+    "medians": {
+      "age": 44.0,
+      "sex": 0.0,
+      "bmi": 30.2,
+      "waist_cm": 106.1,
+      "systolic_bp": 117.0,
+      "diastolic_bp": 78.33333333333333,
+      "hba1c": 5.6,
+      "sedentary_minutes": 360.0
+    }
+  }
+}

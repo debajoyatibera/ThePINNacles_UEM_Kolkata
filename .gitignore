@@ -1,0 +1,44 @@
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.env
+.env.*
+*.log
+
+# Keep required project data and deployment artifacts tracked.
+# Ignore only local caches, not the repository's actual project assets.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/*.csv
+!data/processed/*.json
+data/synthetic/*
+!data/synthetic/.gitkeep
+!data/synthetic/*.csv
+!data/synthetic/*.json
+
+outputs/models/*
+!outputs/models/.gitkeep
+!outputs/models/*.pt
+!outputs/models/*.json
+outputs/predictions/*
+!outputs/predictions/.gitkeep
+!outputs/predictions/*.csv
+!outputs/predictions/*.json
+outputs/figures/*
+!outputs/figures/.gitkeep
+!outputs/figures/*.png
+!outputs/figures/*.svg
+
+# Common generated model and dataset artifacts that are not required for the repo
+# should remain ignored, but the trained checkpoint and processed data are tracked.
+*.pth
+*.ckpt
+*.onnx
+*.parquet

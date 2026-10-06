@@ -1,0 +1,68 @@
+{
+  "training_configuration": {
+    "optimizer": "Adam",
+    "device": "cpu",
+    "learning_rate": 0.001,
+    "physics_weight": 1.0,
+    "hidden_dim": 32,
+    "validation_fraction": 0.2,
+    "ode_parameters": {
+      "alpha_il6": 1.8,
+      "k_il6": 0.45,
+      "alpha_crp": 1.2,
+      "k_crp": 0.18
+    }
+  },
+  "seed": 42,
+  "train_patient_count": 80,
+  "validation_patient_count": 20,
+  "epoch_count": 100,
+  "initial_train_loss": {
+    "total_loss": 1059.7189131975174,
+    "data_loss": 1058.2100830078125,
+    "physics_loss": 1.508830189704895
+  },
+  "final_train_loss": {
+    "total_loss": 895.5773501396179,
+    "data_loss": 894.001953125,
+    "physics_loss": 1.57539701461792
+  },
+  "initial_validation": {
+    "il6": {
+      "mae": 1.9880797273014623,
+      "rmse": 3.784238978944406,
+      "r2": -0.37864689328275114
+    },
+    "crp": {
+      "mae": 17.490012536072207,
+      "rmse": 35.45365819697732,
+      "r2": -0.32180116826822847
+    },
+    "validation_physics_loss": 1.4291141033172607,
+    "validation_physics_residual_metric": 0.4170532524585724
+  },
+  "trained_validation": {
+    "il6": {
+      "mae": 1.3916360877692864,
+      "rmse": 3.300119252367022,
+      "r2": -0.04846805884049665
+    },
+    "crp": {
+      "mae": 13.293190777254228,
+      "rmse": 32.87700174371548,
+      "r2": -0.13665439078902253
+    },
+    "validation_physics_loss": 1.486993432044983,
+    "validation_physics_residual_metric": 0.5879088640213013
+  },
+  "il6_mae": 1.3916360877692864,
+  "il6_rmse": 3.300119252367022,
+  "il6_r2": -0.04846805884049665,
+  "crp_mae": 13.293190777254228,
+  "crp_rmse": 32.87700174371548,
+  "crp_r2": -0.13665439078902253,
+  "validation_physics_loss": 1.486993432044983,
+  "validation_physics_residual_metric": 0.5879088640213013,
+  "scientific_limitation": "Performance metrics at this stage measure agreement with the synthetic biological simulator and do not establish clinical validity.",
+  "data_source": "synthetic ODE-generated trajectories only"
+}

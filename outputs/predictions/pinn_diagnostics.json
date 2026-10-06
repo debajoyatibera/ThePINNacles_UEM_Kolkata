@@ -1,0 +1,237 @@
+{
+  "data_source": "synthetic ODE-generated trajectories only",
+  "patient_split": {
+    "seed": 42,
+    "train_patient_count": 80,
+    "validation_patient_count": 20,
+    "train_validation_patient_overlap": 0
+  },
+  "input_statistics": {
+    "time_hours": {
+      "min": 0.0,
+      "max": 167.0,
+      "mean": 83.5,
+      "std": 48.496563452132015
+    },
+    "stimulus": {
+      "min": 0.0,
+      "max": 4.748715853619851,
+      "mean": 0.35946608254321444,
+      "std": 0.5800183688376747
+    }
+  },
+  "target_statistics": {
+    "il6": {
+      "min": 0.0125239394078158,
+      "max": 31.11992799857779,
+      "mean": 2.1640114206178658,
+      "std": 3.2832557528877326
+    },
+    "crp": {
+      "min": 0.0740407127514575,
+      "max": 325.53841083040913,
+      "mean": 16.058163224937676,
+      "std": 28.538979709567187
+    }
+  },
+  "baseline_loss_magnitudes": {
+    "initial_data_loss": 1058.2100830078125,
+    "initial_physics_loss": 1.508830189704895,
+    "final_data_loss": 894.001953125,
+    "final_physics_loss": 1.57539701461792,
+    "final_data_to_physics_loss_ratio": 567.4772421362127,
+    "final_data_mse_by_target": {
+      "il6": 11.472861289978027,
+      "crp": 882.5291137695312
+    },
+    "validation_physics_loss": 1.486993432044983
+  },
+  "current_validation_metrics": {
+    "il6": {
+      "mae": 1.3916360877692864,
+      "rmse": 3.300119252367022,
+      "r2": -0.04846805884049665
+    },
+    "crp": {
+      "mae": 13.293190777254228,
+      "rmse": 32.87700174371548,
+      "r2": -0.13665439078902253
+    },
+    "validation_physics_loss": 1.486993432044983,
+    "validation_physics_residual_metric": 0.5879088640213013
+  },
+  "conditioning_observations": {
+    "first_layer_tanh_saturation": {
+      "raw_time_fraction_abs_tanh_at_least_0_95": 0.9516764283180237,
+      "normalized_time_fraction_abs_tanh_at_least_0_95_same_weights": 0.005292038898915052,
+      "raw_time_fraction_abs_tanh_at_least_0_99": 0.9312476515769958
+    },
+    "time_input_range_hours": 167.0,
+    "time_input_range_ratio_to_stimulus_range": 35.167402124660555,
+    "note": "The baseline receives unscaled hours from 0 to 167; with its trained weights, most first-layer tanh activations are saturated. Rescaling time to [0, 1] with the same weights sharply reduces that saturation."
+  },
+  "patient_heterogeneity_observations": {
+    "model_inputs": [
+      "time_hours",
+      "stimulus"
+    ],
+    "patient_id_used_as_model_input": false,
+    "patient_initial_state_statistics_at_time_zero": {
+      "il6": {
+        "min": 0.0546087454433404,
+        "max": 1.1875029530861465,
+        "mean": 0.6428478778311209,
+        "std": 0.34952017558618986
+      },
+      "crp": {
+        "min": 0.0740407127514575,
+        "max": 1.498177886596809,
+        "mean": 0.7958800880479676,
+        "std": 0.4270653972006977
+      }
+    },
+    "generator_samples_patient_specific_initial_il6_from": [
+      0.05,
+      1.2
+    ],
+    "generator_samples_patient_specific_initial_crp_from": [
+      0.05,
+      1.5
+    ],
+    "generator_samples_patient_specific_ode_parameter_ranges": {
+      "alpha_il6": [
+        0.8,
+        2.5
+      ],
+      "k_il6": [
+        0.12,
+        0.45
+      ],
+      "alpha_crp": [
+        0.4,
+        1.8
+      ],
+      "k_crp": [
+        0.05,
+        0.25
+      ]
+    },
+    "individual_sampled_ode_parameters_persisted_in_dataset": false,
+    "note": "The generator samples patient-specific initial states and ODE rates, but the five-column trajectory CSV stores neither patient-specific rates nor an explicit initial-state feature. The PINN therefore maps only time and stimulus to targets across heterogeneous patients."
+  },
+  "target_scale_observation": "CRP contributes about 98.7% of the final baseline data MSE (882.5 of 894.0). Target normalization or output weighting is a plausible separate follow-up, but was deliberately not varied in Experiment A.",
+  "scientific_limitation": "Performance metrics at this stage measure agreement with the synthetic biological simulator and do not establish clinical validity.",
+  "normalized_time_experiment": {
+    "experiment": "A: time mapped linearly to [0, 1]",
+    "training_configuration": {
+      "optimizer": "Adam",
+      "device": "cpu",
+      "seed": 42,
+      "train_patient_count": 80,
+      "validation_patient_count": 20,
+      "epochs": 100,
+      "learning_rate": 0.001,
+      "physics_weight": 1.0,
+      "hidden_dim": 32,
+      "time_min_hours": 0.0,
+      "time_max_hours": 167.0,
+      "time_transform": "(time_hours - time_min_hours) / (time_max_hours - time_min_hours)",
+      "stimulus_transform": "none; physical stimulus scale retained",
+      "ode_parameters": {
+        "alpha_il6": 1.8,
+        "k_il6": 0.45,
+        "alpha_crp": 1.2,
+        "k_crp": 0.18
+      }
+    },
+    "il6": {
+      "mae": 1.3636568891934568,
+      "rmse": 3.2567695095083766,
+      "r2": -0.021104014939520077
+    },
+    "crp": {
+      "mae": 13.267640026529623,
+      "rmse": 32.806615525501925,
+      "r2": -0.1317926845025177
+    },
+    "validation_physics_loss": 1.416266918182373,
+    "validation_physics_residual_metric": 0.5789437890052795,
+    "training_history_summary": {
+      "all_losses_finite": true,
+      "total_loss_upward_steps": 0,
+      "initial": {
+        "total_loss": 1045.2132568359375,
+        "data_loss": 1043.71630859375,
+        "physics_loss": 1.4969786405563354
+      },
+      "final": {
+        "total_loss": 892.0159912109375,
+        "data_loss": 890.5138549804688,
+        "physics_loss": 1.5021625757217407
+      },
+      "physics_loss_min": 1.3474842309951782,
+      "physics_loss_max": 2.243925094604492
+    },
+    "scientific_limitation": "Performance metrics at this stage measure agreement with the synthetic biological simulator and do not establish clinical validity.",
+    "data_source": "synthetic ODE-generated trajectories only"
+  },
+  "training_stability": {
+    "baseline": {
+      "all_losses_finite": true,
+      "total_loss_upward_steps": 0,
+      "initial": {
+        "total_loss": 1059.7188720703125,
+        "data_loss": 1058.2100830078125,
+        "physics_loss": 1.508830189704895
+      },
+      "final": {
+        "total_loss": 896.3392944335938,
+        "data_loss": 894.7603149414062,
+        "physics_loss": 1.5789772272109983
+      },
+      "physics_loss_min": 1.501420497894287,
+      "physics_loss_max": 2.1507010459899902
+    },
+    "normalized_time": {
+      "all_losses_finite": true,
+      "total_loss_upward_steps": 0,
+      "initial": {
+        "total_loss": 1045.2132568359375,
+        "data_loss": 1043.71630859375,
+        "physics_loss": 1.4969786405563354
+      },
+      "final": {
+        "total_loss": 892.0159912109375,
+        "data_loss": 890.5138549804688,
+        "physics_loss": 1.5021625757217407
+      },
+      "physics_loss_min": 1.3474842309951782,
+      "physics_loss_max": 2.243925094604492
+    },
+    "observation": "Both runs had finite loss histories and monotonically decreasing total loss. The physics-loss component fluctuated and did not decrease monotonically in either run."
+  },
+  "baseline_vs_normalized_time": {
+    "baseline_il6": {
+      "mae": 1.3916360877692864,
+      "rmse": 3.300119252367022,
+      "r2": -0.04846805884049665
+    },
+    "normalized_il6": {
+      "mae": 1.3636568891934568,
+      "rmse": 3.2567695095083766,
+      "r2": -0.021104014939520077
+    },
+    "baseline_crp": {
+      "mae": 13.293190777254228,
+      "rmse": 32.87700174371548,
+      "r2": -0.13665439078902253
+    },
+    "normalized_crp": {
+      "mae": 13.267640026529623,
+      "rmse": 32.806615525501925,
+      "r2": -0.1317926845025177
+    },
+    "baseline_validation_physics_loss": 1.486993432044983,
+    "normalized_validation_physics_loss": 1.416266918182373
+  }
+}

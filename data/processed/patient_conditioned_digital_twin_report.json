@@ -1,0 +1,79 @@
+{
+  "source_dataset": "data/processed/nhanes_modeling_cohort.csv",
+  "number_of_unique_nhanes_participants": 7282,
+  "number_of_trajectory_rows": 1223376,
+  "time_points_per_participant": 168,
+  "random_seed": 42,
+  "baseline_feature_list": [
+    "age",
+    "sex",
+    "bmi",
+    "waist_cm",
+    "systolic_bp",
+    "diastolic_bp",
+    "hba1c",
+    "sedentary_minutes"
+  ],
+  "synthetic_feature_list": [
+    "synthetic_stimulus",
+    "synthetic_il6",
+    "synthetic_crp"
+  ],
+  "conditioning_method": "Equal-weight mean of within-cohort percentile ranks for the listed baseline features; this is a synthetic construction and not a clinically validated relationship.",
+  "synthetic_stimulus_bounds": [
+    0.0,
+    5.0
+  ],
+  "time_step_hours": 1.0,
+  "ode_parameters": {
+    "alpha_il6": 1.8,
+    "k_il6": 0.45,
+    "alpha_crp": 1.2,
+    "k_crp": 0.18
+  },
+  "ode_parameter_source": "Existing competition PoC configuration from run_pinn_experiment.py; not fitted to NHANES or clinical data.",
+  "imputation_strategy": {
+    "method": "Median imputation for numeric baseline covariates and mode imputation for sex, used only for synthetic conditioning. Original baseline values remain unchanged in the output.",
+    "feature_counts": {
+      "age": 0,
+      "sex": 0,
+      "bmi": 112,
+      "waist_cm": 328,
+      "systolic_bp": 589,
+      "diastolic_bp": 589,
+      "hba1c": 775,
+      "sedentary_minutes": 1467
+    },
+    "missing_baseline_rows": 1831,
+    "row_indicator_column": "imputed_baseline_fields"
+  },
+  "data_provenance_statement": "NHANES 2021-2023 baseline values are real observed participant characteristics. The bounded synthetic stimulus is generated from baseline-feature percentile ranks. Synthetic IL-6 and CRP trajectories are model-simulated with the existing biological ODE. None of the dynamic values are observed clinical measurements.",
+  "limitation_statement": "This dataset is a competition/research PoC and does not represent observed longitudinal clinical measurements. NHANES is cross-sectional and does not provide longitudinal IL-6, longitudinal CRP, or continuous wearable telemetry.",
+  "no_observed_longitudinal_nhanes_data_created": true,
+  "no_observed_nhanes_il6_created": true,
+  "no_observed_nhanes_crp_longitudinal_data_created": true,
+  "nhanes_crp_used_for_conditioning": false,
+  "missing_baseline_value_counts": {
+    "age": 0,
+    "sex": 0,
+    "bmi": 112,
+    "waist_cm": 328,
+    "systolic_bp": 589,
+    "diastolic_bp": 589,
+    "hba1c": 775,
+    "sedentary_minutes": 1467
+  },
+  "imputation_summary": {
+    "missing_baseline_rows": 1831,
+    "feature_counts": {
+      "age": 0,
+      "sex": 0,
+      "bmi": 112,
+      "waist_cm": 328,
+      "systolic_bp": 589,
+      "diastolic_bp": 589,
+      "hba1c": 775,
+      "sedentary_minutes": 1467
+    }
+  }
+}
