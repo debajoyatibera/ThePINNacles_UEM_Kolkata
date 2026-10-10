@@ -21,6 +21,10 @@ from biotwin.models.conditioned_pinn import (
     StaticFeatureScaler,
     TimeNormalizedConditionedPINN,
 )
+from biotwin.models.event_predictor import (
+    DEFAULT_FEATURES,
+    EventPredictor,
+)
 
 try:
     import streamlit as st
@@ -33,6 +37,8 @@ DYNAMIC_DATA_PATH = REPO_ROOT / "data/processed/patient_conditioned_digital_twin
 CHECKPOINT_PATH = REPO_ROOT / "outputs/models/conditioned_pinn_full.pt"
 SCALER_PATH = REPO_ROOT / "outputs/models/conditioned_pinn_scaler.json"
 SPLIT_PATH = REPO_ROOT / "outputs/predictions/conditioned_experiment_split.json"
+EVENT_MODEL_PATH = REPO_ROOT / "outputs/models/nhanes_adverse_event_predictor_compatible.joblib"
+EVENT_DATA_PATH = REPO_ROOT / "data/synthetic/nhanes_adverse_event_latest.csv"
 
 
 def load_baseline_data() -> pd.DataFrame:
@@ -69,6 +75,22 @@ def load_persisted_scaler() -> StaticFeatureScaler:
             f"expected {CONDITIONED_STATIC_FEATURES}, found {scaler.feature_names}"
         )
     return scaler
+
+
+def load_event_predictor() -> EventPredictor:
+    """Load the trained synthetic 2-hour adverse-event predictor."""
+    if not EVENT_MODEL_PATH.exists():
+        raise FileNotFoundError(
+            f"Adverse-event model is missing at {EVENT_MODEL_PATH}. "
+            "Train the event predictor before dashboard inference."
+        )
+
+    predictor = EventPredictor.load(EVENT_MODEL_PATH)
+
+    if not predictor.feature_names:
+        raise ValueError("Persisted adverse-event predictor has no features")
+
+    return predictor
 
 
 def load_model() -> tuple[torch.nn.Module, StaticFeatureScaler, dict[str, Any]]:
@@ -145,6 +167,61 @@ def run_patient_simulation(patient_id: float | int) -> dict[str, Any]:
     }
 
 
+def run_event_prediction(patient_id: float | int) -> dict[str, Any]:
+    """Predict the synthetic adverse-event probability within the next 2 hours."""
+    predictor = load_event_predictor()
+
+    event_df = pd.read_csv(EVENT_DATA_PATH)
+
+    # The event dataset uses synthetic IDs such as P000001, while the
+    # NHANES dashboard participant selector uses numeric IDs.
+    numeric_id = int(float(patient_id))
+    patient_key = numeric_id
+
+    patient_data = (
+        event_df[event_df["patient_id"] == patient_key]
+        .sort_values("timestamp")
+        .reset_index(drop=True)
+    )
+
+    if patient_data.empty:
+        raise ValueError(
+            f"No adverse-event feature data found for patient_id={patient_id} "
+            f"(mapped to {patient_key})"
+        )
+
+    latest_row = patient_data.iloc[[-1]].copy()
+
+    missing = [
+        feature
+        for feature in predictor.feature_names
+        if feature not in latest_row.columns
+    ]
+    if missing:
+        raise ValueError(
+            f"Adverse-event dataset is missing predictor features: {missing}"
+        )
+
+    probability = float(predictor.predict_probability(latest_row)[0])
+    predicted_event = int(predictor.predict(latest_row)[0])
+
+    if not 0.0 <= probability <= 1.0:
+        raise ValueError(
+            f"Event probability is outside [0, 1]: {probability}"
+        )
+
+    return {
+        "patient_id": patient_id,
+        "event_patient_id": patient_key,
+        "timestamp": latest_row["timestamp"].iloc[0],
+        "forecast_end_hours": float(latest_row["forecast_end_hours"].iloc[0]),
+        "event_probability": probability,
+        "predicted_event": predicted_event,
+        "feature_row": latest_row.iloc[0].to_dict(),
+    }
+
+
+
 def calculate_simulated_trend(values: np.ndarray | pd.Series) -> str:
     """Classify the simulated inflammation trajectory using the trajectory direction."""
     series = np.asarray(values, dtype=np.float32).reshape(-1)
@@ -200,6 +277,7 @@ def _render_ui() -> None:
     dynamic_df = load_dynamic_data()
     patient_dynamic = dynamic_df[dynamic_df["patient_id"] == float(selected_patient_id)].sort_values("time_hours").reset_index(drop=True)
     result = run_patient_simulation(selected_patient_id)
+    event_result = run_event_prediction(selected_patient_id)
 
     st.markdown("### Patient Selection")
     st.write(f"Selected participant: {selected_patient_id}")
@@ -254,6 +332,58 @@ def _render_ui() -> None:
     st.line_chart(il6_chart, x_label="Time (hours since simulation start)")
     st.markdown("#### MODEL-SIMULATED CRP")
     st.line_chart(crp_chart, x_label="Time (hours since simulation start)")
+    st.markdown("### 2-HOUR SIMULATED ADVERSE-EVENT FORECAST")
+    st.caption(
+        "Real NHANES baseline + synthetic wearable features are used to estimate the probability "
+        "of a simulated adverse event within the next 2 hours. This is a competition PoC, "
+        "not a clinical prediction."
+    )
+
+    event_columns = st.columns(3)
+
+    with event_columns[0]:
+        st.metric(
+            "Event probability",
+            f"{event_result['event_probability'] * 100:.1f}%"
+        )
+
+    with event_columns[1]:
+        alert_label = (
+            "Simulated event alert"
+            if event_result["predicted_event"] == 1
+            else "No simulated event alert"
+        )
+        st.metric(
+            "Forecast",
+            alert_label
+        )
+
+    with event_columns[2]:
+        st.metric(
+            "Forecast horizon",
+            "2 hours"
+        )
+
+    st.caption(
+        f"Latest synthetic observation: {event_result['timestamp']} "
+        f"· Event data ID: {event_result['event_patient_id']}"
+    )
+
+    if event_result["predicted_event"] == 1:
+        st.warning(
+            "Simulated adverse-event alert: the model predicts elevated probability "
+            "of the synthetic target within the next 2 hours."
+        )
+    else:
+        st.success(
+            "No simulated adverse-event alert at the current model threshold."
+        )
+
+    st.info(
+        "Important: this event target, wearable stream, and prediction are synthetic. "
+        "The model has not been clinically validated and must not be used for medical decisions."
+    )
+
     st.info(
         "Controlled synthetic evaluation: The controlled experiment did not demonstrate predictive "
         "improvement from patient conditioning."
@@ -268,7 +398,8 @@ def _render_ui() -> None:
 
     st.markdown("### DATA & MODEL PROVENANCE")
     st.write("REAL: NHANES baseline clinical observations.")
-    st.write("SYNTHETIC: Dynamic stimulus.")
+    st.write("SYNTHETIC: Wearable telemetry and dynamic stimulus.")
+    st.write("MODEL-PREDICTED: 2-hour simulated adverse-event probability.")
     st.write("MODEL-SIMULATED: IL-6 and CRP trajectories.")
     st.write("NHANES does not provide longitudinal IL-6/CRP or continuous wearable telemetry in this project.")
     st.write("This is a competition/research PoC and is not clinically validated.")

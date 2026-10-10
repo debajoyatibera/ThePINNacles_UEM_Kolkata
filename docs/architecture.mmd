@@ -1,0 +1,19 @@
+flowchart TD
+    A["REAL DATA<br/>NHANES baseline clinical observations"] --> B["Baseline feature preparation<br/>Missing-value handling"]
+    C["SYNTHETIC DATA<br/>Wearable-like hourly time series"] --> D["Temporal feature engineering<br/>6-hour rolling means, variability and slopes"]
+    B --> E["Combined modelling inputs"]
+    D --> E
+
+    E --> F["Adverse-event prediction<br/>StandardScaler + Logistic Regression"]
+    F --> G["Predicted probability of a synthetic adverse event within 2 hours."]
+
+    B --> H["Inflammation simulation inputs"]
+    I["Synthetic dynamic stimulus"] --> H
+    H --> J["Biological ODE + Physics-Informed Neural Network"]
+    J --> K["Model-simulated IL-6 and CRP trajectories"]
+
+    G --> L["Streamlit research dashboard"]
+    K --> L
+    L --> M["Patient selection, forecasts, trajectories and provenance"]
+
+    N["Important limitation<br/>Synthetic wearable data, synthetic event labels,<br/>and no clinical validation"] -.-> L

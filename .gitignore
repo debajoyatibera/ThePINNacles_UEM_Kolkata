@@ -43,3 +43,14 @@ outputs/figures/*
 *.onnx
 *.parquet
 *.egg-info/
+# Final competition artifact rules
+# Large generated training datasets stay local.
+data/synthetic/*.csv
+!data/synthetic/nhanes_adverse_event_latest.csv
+
+# Generated prediction tables stay local.
+outputs/predictions/*.csv
+
+# Event predictor serving artifact is small enough to commit.
+outputs/models/*.joblib
+!outputs/models/nhanes_adverse_event_predictor_compatible.joblib
