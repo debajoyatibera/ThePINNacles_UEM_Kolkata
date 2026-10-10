@@ -1,100 +1,171 @@
-# Physics-Informed Digital Twin for Personalized Inflammation Trajectory Simulation
+# The PINNacles — Physics-Informed Digital Twin for Personalized Inflammation Simulation
 
-### CRP Digital Twin Challenge 2026 — Research/Competition PoC
+## CRP Digital Twin Challenge 2026 | Research and Competition Proof of Concept
 
-This project demonstrates a physics-informed Digital Twin PoC that combines a real NHANES baseline health profile with a synthetic dynamic inflammatory stimulus to simulate IL-6 and CRP trajectories.
+**Project Title:** Physics-Informed Digital Twin for Personalized Inflammation Trajectory Simulation and Synthetic Adverse-Event Forecasting
 
-This is a research/competition prototype, not a clinically validated diagnostic or predictive system.
+**Team:** The PINNacles  
+**Institution:** University of Engineering & Management (UEM), Kolkata, West Bengal, India
 
-## Core Pipeline
+## Team Details
+
+- **Debajoyati Bera** — Team Leader
+- **Sneha Chowdhury** — Team Member
+- **Anmol Arpit** — Team Member
+
+## Problem Statement
+
+Chronic and lifestyle-related health conditions require longitudinal monitoring, but static clinical records alone cannot represent how an individual's physiological state may change over time. This project explores a computational Digital Twin prototype that combines baseline health observations with time-varying signals to simulate inflammatory trajectories and demonstrate short-horizon adverse-event forecasting.
+
+The prototype is a research demonstration. Its synthetic event targets and simulated physiological trajectories do not establish real-world clinical prediction accuracy.
+
+## Healthcare Use Case
+
+The intended use case is a **doctor-facing research dashboard** for exploring baseline patient characteristics, simulated inflammatory trajectories, and a two-hour synthetic adverse-event forecast.
+
+The prototype demonstrates how static health information and dynamic signals could be combined in a future monitoring system. It is not intended to diagnose a condition, determine treatment, or replace clinical judgement.
+
+## Live Prototype
+
+- **Streamlit dashboard:** https://thepinnacles-crp-digital-twin.streamlit.app/
+- **Public GitHub repository:** https://github.com/debajoyatibera/ThePINNacles_UEM_Kolkata
+
+## Core Architecture
 
 ```text
-REAL NHANES baseline
-	↓
-Patient baseline features
-	↓
-Synthetic dynamic stimulus
-	↓
-Physics-informed Digital Twin / PINN
-	↓
-Model-simulated IL-6 + CRP trajectories
-	↓
-Simulated trend
-	↓
-Streamlit demonstration dashboard
+REAL NHANES baseline observations
+              |
+              v
+    Patient baseline features
+              |
+              +-----------------------------+
+              |                             |
+              v                             v
+Synthetic wearable time series     Static patient features
+              |                             |
+              v                             v
+      Temporal feature engineering
+              |
+              v
+Synthetic 2-hour event target
+              |
+              v
+ Logistic Regression event predictor
+              |
+              v
+ Predicted event probability
+
+Parallel inflammation simulation:
+Synthetic dynamic stimulus + baseline features
+              |
+              v
+      Biological ODE / PINN
+              |
+              v
+    Model-simulated IL-6 and CRP
+              |
+              v
+       Streamlit dashboard
 ```
 
-## Digital Twin Explanation
+## Technical Stack
 
-A Digital Twin is represented here as a computational model of an individual's inflammatory state. The participant's baseline profile conditions the model, while a time-varying stimulus drives the simulated trajectory.
-
-In this PoC, the dynamic stimulus and longitudinal IL-6/CRP trajectories are synthetic.
+- **Language:** Python
+- **Data processing:** pandas, NumPy
+- **Scientific computing:** SciPy
+- **Machine learning:** scikit-learn
+- **Physics-informed modelling:** PyTorch
+- **Dashboard:** Streamlit
+- **Testing:** pytest
+- **Data format:** CSV
+- **Development environment:** GitHub Codespaces
+- **Version control:** Git and GitHub
 
 ## Data Provenance
 
-### REAL
+### REAL: NHANES baseline
 
-NHANES 2021–2023 baseline clinical observations used in the modeling cohort. These are cross-sectional observations, not longitudinal measurements.
+The modelling cohort uses NHANES 2021–2023 baseline clinical and activity observations. NHANES observations are cross-sectional and do not provide the longitudinal wearable telemetry or repeated IL-6/CRP measurements required for direct real-world trajectory validation.
 
-### SYNTHETIC
+### SYNTHETIC: Dynamic signals and event labels
 
-The dynamic stimulus is synthetically generated from baseline-feature-derived percentile/rank information and generated temporal pulses.
+Synthetic wearable telemetry is paired with NHANES participant identifiers for this competition proof of concept. Temporal features are calculated from a six-hour observation window.
 
-It is **not** observed wearable telemetry.
+The adverse-event label represents a **simulated event within the next two hours**. It is generated by a synthetic mechanism, not obtained from observed clinical events.
 
-### MODEL-SIMULATED
+The dynamic signals are not real wearable measurements. The synthetic event labels are not verified medical outcomes.
 
-The displayed IL-6 and CRP trajectories in the dashboard are generated by the trained conditioned PINN.
+### MODEL-SIMULATED: Inflammation trajectories
 
-The synthetic ODE trajectories are used as synthetic training/evaluation targets. They are not real-world measurements.
+A biological ordinary differential equation (ODE) represents simplified IL-6 and CRP dynamics under a changing stimulus. A physics-informed neural network (PINN) models the simulated trajectories.
 
-Missing baseline covariates used for synthetic conditioning are imputed with numeric medians or the categorical mode. Original baseline values remain unchanged in the generated rows; `imputed_baseline_fields` records which fields were imputed (`NONE` means none were imputed). NHANES baseline CRP is not used to condition the simulation.
+The displayed IL-6 and CRP values are model outputs, not real-time laboratory measurements. NHANES baseline CRP is not used to condition the inflammation simulation.
 
-## Model
+Missing static covariates used by the event prototype are converted from designated missing-value codes and imputed using cohort medians. Imputed values must not be interpreted as observed measurements.
 
-- A two-state biological ODE describes IL-6 and CRP dynamics under a stimulus.
-- A physics-informed neural network (PINN) models the two outputs using time, stimulus, and static patient baseline features.
-- Time is normalized for the model while physics residuals use derivatives with respect to physical time.
-- Patient conditioning uses age, sex, BMI, waist circumference, systolic and diastolic blood pressure, HbA1c, and sedentary minutes.
-- Training combines data loss with physics residual loss.
-- Train and validation sets are split by patient so each patient's trajectory stays in one split.
-- Static feature normalization is fitted on training patients only. The exact inference scaler is persisted at `outputs/models/conditioned_pinn_scaler.json`.
+## Model Details
 
-This model has not been shown to have clinical accuracy or real-world predictive performance.
+### 1. Biological ODE and PINN
 
-## Controlled Conditioning Experiment
+- A two-state biological ODE describes simplified IL-6 and CRP dynamics.
+- A PINN estimates the two outputs using time, dynamic stimulus, and static patient features.
+- Time normalization is used for model input, while physics residuals use derivatives with respect to physical time.
+- Patient conditioning includes age, sex, BMI, waist circumference, systolic and diastolic blood pressure, HbA1c, and sedentary minutes.
+- Training combines data-fitting loss with physics-residual loss.
+- Training and evaluation are split by patient, and static feature normalization is fitted using training patients only.
 
-A baseline time-normalized PINN was compared with the patient-conditioned PINN using the same patient-level split and controlled settings. Evaluation was against synthetic/model-simulated targets.
+### 2. Synthetic Adverse-Event Predictor
+
+- **Model:** Standardized Logistic Regression.
+- **Observation window:** Six hours of synthetic wearable features.
+- **Forecast horizon:** Two hours.
+- **Static features:** Age, BMI, blood pressure, HbA1c, and sedentary minutes.
+- **Dynamic features:** Rolling means, standard deviations, and slopes for heart-rate variability (HRV), resting heart rate, sleep, stress, and physical activity.
+- **Evaluation split:** Patient-level 80/20 split to keep each patient's observations within a single split.
+- **Target:** Synthetic binary event label for the next two hours.
+
+The model excludes the generated event probability and forecast-end metadata from its predictor features to avoid direct target leakage.
+
+## Event Predictor Evaluation
+
+The NHANES-linked synthetic event experiment reported:
+
+| Metric | Result |
+|---|---:|
+| ROC-AUC | 0.7197 |
+| PR-AUC (Average Precision) | 0.3496 |
+| Test event rate | 0.1718 |
+| Forecast horizon | 2 hours |
+
+**Interpretation:** These are results against a synthetic target. They measure performance on the project's simulated data-generating mechanism, not accuracy at predicting real clinical events. They must not be presented as evidence of clinical effectiveness.
+
+## Controlled PINN Conditioning Experiment
+
+The baseline time-normalized PINN was compared with the patient-conditioned PINN against synthetic/model-simulated targets.
 
 | Model | IL-6 MAE | IL-6 R² | CRP MAE | CRP R² |
 |---|---:|---:|---:|---:|
 | Baseline | 1.0539 | 0.0643 | 8.9218 | -0.3538 |
 | Conditioned | 1.2119 | -0.1818 | 9.8150 | -0.4368 |
 
-The controlled synthetic evaluation did not demonstrate predictive improvement from patient conditioning. The baseline model performed better on both reported target metrics in this experiment.
+Patient conditioning did not demonstrate predictive improvement in this controlled synthetic experiment. The baseline performed better on the reported metrics. This limitation is disclosed rather than hidden.
 
-This result is treated as an honest limitation and motivates further validation and model development with real longitudinal clinical data.
+## Dashboard Features
 
-The full comparison report is `outputs/predictions/pinn_conditioning_comparison.json`.
-
-## Current Dashboard
-
-The Streamlit app is a **research/demo interface**. It allows a user to:
+The Streamlit research interface allows users to:
 
 1. Select an NHANES participant.
-2. View real baseline characteristics.
-3. View the synthetic dynamic stimulus.
-4. Run trained conditioned PINN inference.
-5. View model-simulated IL-6.
-6. View model-simulated CRP.
-7. View the non-clinical direction of the simulated combined output.
-8. Review data provenance and limitations.
+2. Review baseline characteristics.
+3. Explore synthetic dynamic inputs.
+4. View model-simulated IL-6 and CRP trajectories.
+5. View the two-hour synthetic event forecast where the event model is available.
+6. Review data provenance and limitations.
 
-The dashboard loads the existing trained checkpoint and scaler; it does not train the model when it starts.
+The dashboard loads saved model artifacts rather than training the models during startup.
 
 ## Running the Dashboard
 
-Use Python 3.12 in GitHub Codespaces. Create and activate an isolated virtual environment, then install the dependencies:
+Use Python 3.12 in GitHub Codespaces.
 
 ```bash
 python3.12 -m venv .venv
@@ -103,46 +174,41 @@ pip install -r requirements.txt
 PYTHONPATH=. streamlit run src/biotwin/dashboard/app.py
 ```
 
-## Model and Evaluation Artifacts
-
-Important model artifacts:
-
-- `outputs/models/conditioned_pinn_full.pt`
-- `outputs/models/conditioned_pinn_scaler.json`
-- `outputs/models/time_normalized_baseline_full.pt`
-
-Evaluation reports, predictions, experiment split metadata, and training histories are stored under `outputs/predictions/`.
-
-## Testing
-
-The full regression suite was verified with 174 passing tests. It covers the ODE, synthetic data, NHANES preprocessing, Digital Twin bridge, PINN, training, inference, and dashboard behavior.
-
-Run the suite with:
+Run tests with:
 
 ```bash
 PYTHONPATH=. pytest -q
 ```
 
-## Limitations
+## Submission Resources
 
-- NHANES baseline data are cross-sectional.
-- No real longitudinal IL-6 measurements are used.
-- No real continuous wearable stream is used.
-- The dynamic stimulus is synthetic.
-- IL-6/CRP trajectories are model-simulated.
-- The PoC has not been clinically validated.
-- The controlled conditioning experiment did not show predictive improvement.
-- Results cannot establish clinical utility or support treatment recommendations.
+- **Demo video (YouTube Unlisted, 15–20 minutes):** TODO — add the actual video URL.
+- **Architecture diagram (PDF/PPT):** TODO — add the committed file path or public link.
+- **Project presentation (PDF/PPT):** TODO — add the committed file path or public link.
+- **Open-source license:** See the `LICENSE` file in this repository.
+
+Replace every TODO above with a working link or path before submitting.
+
+## Limitations and Responsible Use
+
+- NHANES baseline observations are cross-sectional.
+- No real continuous wearable stream is used in this prototype.
+- Longitudinal IL-6 and CRP trajectories are simulated.
+- Adverse-event targets are synthetic, not observed clinical events.
+- The models have not been clinically validated.
+- The PINN conditioning experiment did not show predictive improvement.
+- Imputation introduces assumptions and does not recover missing clinical measurements.
+- The prototype cannot support diagnosis, treatment recommendations, or claims of clinical utility.
 
 ## Future Work
 
-The following are future work, not implemented capabilities:
+- Integrate appropriate real longitudinal clinical and wearable datasets.
+- Evaluate against observed, independently verified outcomes.
+- Improve model calibration and uncertainty quantification.
+- Conduct external validation and clinician/user studies.
+- Explore healthcare data interoperability standards such as HL7 FHIR.
+- Conduct prospective validation before any clinical use.
 
-- Real longitudinal CRP/IL-6 data.
-- Real wearable telemetry.
-- External validation.
-- Improved patient conditioning.
-- Uncertainty quantification.
-- Clinician/user studies.
-- Interoperability with standards such as HL7 FHIR.
-- Prospective validation.
+## License
+
+This project will be distributed under the open-source license specified in the repository's `LICENSE` file. Review that file before reuse or redistribution.
