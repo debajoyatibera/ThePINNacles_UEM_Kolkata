@@ -278,7 +278,6 @@ PYTHONPATH=. pytest -q
 
 - **Demo video (YouTube Unlisted, 15–20 minutes):** [Watch the project demo](https://youtu.be/XiI0CAc0jpM)
 
-The presentation and demo-video links must be replaced with publicly accessible resources before submission. Test each link in a signed-out or private browser window.
 
 ## Limitations and Responsible Use
 
